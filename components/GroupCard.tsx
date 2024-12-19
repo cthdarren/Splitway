@@ -10,18 +10,12 @@ type GroupCardProps = {
 };
 
 function GroupCard({ title, expenditure }: GroupCardProps) {
-    const { currency, setCurrency } = useCurrencyContext;
+    const { currency, setCurrency } = useCurrencyContext();
     return (
-        <Pressable
-            style={{
-                paddingHorizontal: 20,
-                paddingVertical: 30,
-                backgroundColor: "#e6e6e6",
-            }}
-        >
+        <Pressable className="px-5 py-8 bg-gray-200 rounded-md">
             <View className="flex flex-row">
                 <Text className="w-1/2 text-xl">{title}</Text>
-                <Text className="w-1/2 text-xl text-right">{expenditure}</Text>
+                <Text className="w-1/2 text-xl text-right">{currency + expenditure}</Text>
             </View>
         </Pressable>
     );
