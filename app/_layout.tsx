@@ -1,20 +1,29 @@
 import { Stack } from "expo-router";
-import "../global.css"
-import { createContext, useContext, useState } from "react";
+import "../global.css";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { ThemeProvider, useThemeContext } from "@/contexts/ThemeContext";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 
 export default function RootLayout() {
-  const ThemeContext = createContext('dark');
-  const [theme, setTheme] = useState('dark');
+    return (
+        <LanguageProvider>
+            <ThemeProvider>
+                <CurrencyProvider>
+                    <App/>
+                </CurrencyProvider>
+            </ThemeProvider>
+        </LanguageProvider>
+    );
+}
 
-  return (
-    <ThemeContext.Provider value={theme}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          statusBarStyle: theme == 'dark' ? ('dark'):('light'),
-        }}
-      />
-      ;
-    </ThemeContext.Provider>
-  );
+function App() {
+    const { theme } = useThemeContext();
+    return (
+        <Stack
+            screenOptions={{
+                headerShown: false,
+                statusBarStyle: theme == "dark" ? "dark" : "light",
+            }}
+        />
+    );
 }
