@@ -1,3 +1,4 @@
+import "../global.css"
 import { Stack } from "expo-router";
 import { createContext, useContext, useState } from "react";
 
@@ -10,7 +11,6 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          statusBarTranslucent: true,
           statusBarStyle: theme == 'dark' ? ('dark'):('light'),
         }}
       />

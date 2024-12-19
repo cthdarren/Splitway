@@ -5,11 +5,9 @@ export default function Index() {
     <View
       style={{
         flex: 1,
-        justifyContent: "top",
-        alignItems: "center",
       }}
     >
-      <Text className="text-7xl">SplitWay</Text>
+      <Text className="text-xl">SplitWay</Text>
     </View>
   );
 }
