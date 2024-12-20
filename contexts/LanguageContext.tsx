@@ -1,9 +1,5 @@
+import { languageContextType } from "@/types/contexttypes"
 import { useContext, createContext, ReactNode, useState } from "react";
-
-type languageContextType = {
-    language: string;
-    setLanguage: React.Dispatch<React.SetStateAction<string>>;
-};
 
 const LanguageContext = createContext<languageContextType | null>(null);
 

@@ -1,9 +1,5 @@
+import { themeContextType } from "@/types/contexttypes"
 import { createContext, useContext, ReactNode, useState } from "react";
-
-type themeContextType = {
-    theme: string;
-    setTheme: React.Dispatch<React.SetStateAction<string>>;
-};
 
 const ThemeContext = createContext<themeContextType | null>(null);
 
