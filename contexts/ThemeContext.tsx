@@ -17,5 +17,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 export const useThemeContext= () => {
-  return useContext(ThemeContext);
+    const context = useContext(ThemeContext);
+    if (!context) {
+        throw new Error(
+            "useCurrencyContext must be used within a CurrencyProvider",
+        );
+    }
+    return context;
 };

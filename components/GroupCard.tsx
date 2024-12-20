@@ -1,9 +1,8 @@
 import { useContext } from "react";
-import CurrencyContext, {
-    useCurrencyContext,
-} from "../contexts/CurrencyContext";
-import { Text, View, Pressable } from "react-native";
-import { Link } from "expo-router";
+import { useCurrencyContext } from "../contexts/CurrencyContext";
+import { Text, View, Pressable, TouchableOpacity } from "react-native";
+import { Link, RelativePathString, router } from "expo-router";
+import { navigate } from "expo-router/build/global-state/routing";
 
 type GroupCardProps = {
     id: number;
@@ -14,12 +13,14 @@ type GroupCardProps = {
 function GroupCard({ id, title, expenditure }: GroupCardProps) {
     const { currency, setCurrency } = useCurrencyContext();
     return (
-        <Link href={"/group/"+id} className="px-5 py-8 bg-gray-200 rounded-md">
-            <View className="flex flex-row">
-                <Text className="w-1/2 text-xl">{title}</Text>
-                <Text className="w-1/2 text-xl text-right">{currency + expenditure}</Text>
+        <TouchableOpacity onPress={()=> router.push(`/group/${id}`)}>
+            <View className="bg-gray-200 px-3 w-full rounded-md mt-8 py-6 flex flex-row justify-between">
+                <Text className="text-xl">{title}</Text>
+                <Text className="text-xl text-right">
+                    {currency + expenditure}
+                </Text>
             </View>
-        </Link>
+        </TouchableOpacity>  
     );
 }
 

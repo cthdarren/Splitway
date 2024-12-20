@@ -18,5 +18,11 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useCurrencyContext = () => {
-  return useContext(CurrencyContext);
+    const context = useContext(CurrencyContext);
+    if (!context) {
+        throw new Error(
+            "useCurrencyContext must be used within a CurrencyProvider",
+        );
+    }
+    return context;
 };

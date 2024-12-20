@@ -15,6 +15,11 @@ export default function Index() {
             <Text className="font-bold text-2xl mt-10">{strings.GROUPS_HEADER}</Text>
             <ScrollView className="py-5">
                 <GroupCard id={1} title={"Japan Trip"} expenditure={"500"}/>
+                <GroupCard id={2} title={"Japan Trip"} expenditure={"500"}/>
+                <GroupCard id={3} title={"Japan Trip"} expenditure={"500"}/>
+                <GroupCard id={4} title={"Japan Trip"} expenditure={"500"}/>
+                <GroupCard id={5} title={"Japan Trip"} expenditure={"500"}/>
+                <GroupCard id={6} title={"Japan Trip"} expenditure={"500"}/>
 
             </ScrollView>
             <Button onPress={()=> {setTheme(toChange)}} title={toChange}/>
