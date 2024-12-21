@@ -2,17 +2,7 @@ import GroupCard from "@/components/GroupCard";
 import strings from "@/i18n/en.json";
 import { useThemeContext } from "@/contexts/ThemeContext";
 import { Text, View, Button, ScrollView } from "react-native";
-
-type groupData = {
-  id: number;
-  name: string;
-  expenditure: number;
-  currency: string;
-};
-
-type returnData = {
-  data: groupData[];
-};
+import { groupData, returnData } from "@/types/networkresponses";
 
 function getGroupsData() {
   const data: returnData = {
