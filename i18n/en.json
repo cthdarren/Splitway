@@ -1,4 +1,8 @@
 {
   "APP_NAME": "SplitWay",
-  "GROUPS_HEADER": "Groups"
+  "GROUPS_HEADER": "Groups",
+  "SETTINGS_HEADER": "Settings",
+  "CHANGE_THEME_SETTING": "Change theme",
+  "LIGHT_THEME_NAME": "light",
+  "DARK_THEME_NAME": "dark",
 }

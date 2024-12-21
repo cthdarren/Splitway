@@ -1,6 +1,5 @@
 import GroupCard from "@/components/GroupCard";
 import strings from "@/i18n/en.json";
-import { useThemeContext } from "@/contexts/ThemeContext";
 import { Text, View, Button, ScrollView } from "react-native";
 import { groupData, returnData } from "@/types/networkresponses";
 
@@ -32,13 +31,8 @@ function getGroupsData() {
 }
 
 export default function Index() {
-  const { theme, setTheme } = useThemeContext();
-
   const data: groupData[] = getGroupsData();
-  var toChange = "light";
-  if (theme == "light") {
-    toChange = "dark";
-  }
+
   return (
     <View className="flex py-5 px-8 h-full">
       <Text className="text-3xl">{strings.APP_NAME}</Text>
@@ -48,12 +42,6 @@ export default function Index() {
           <GroupCard key={x.id} id={x.id} title={x.name} expenditure={x.expenditure} currency={x.currency} />
         ))}
       </ScrollView>
-      <Button
-        onPress={() => {
-          setTheme(toChange);
-        }}
-        title={toChange}
-      />
     </View>
   );
 }

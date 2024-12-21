@@ -1,4 +1,5 @@
 import { Stack } from "expo-router";
+import strings from "@/i18n/en.json"
 import "../global.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider, useThemeContext } from "@/contexts/ThemeContext";
@@ -22,7 +23,7 @@ function App() {
         <Stack
             screenOptions={{
                 headerShown: false,
-                statusBarStyle: theme == "dark" ? "dark" : "light",
+                statusBarStyle: theme == strings.LIGHT_THEME_NAME ? "light" : "dark",
             }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
