@@ -30,7 +30,7 @@ export default function Group() {
         </Text>
         <Text className="text-xl font-bold mt-5">Members</Text>
         {data.members.map((member) => (
-          <Text>{member.name}</Text>
+          <Text key={member.id}>{member.name}</Text>
         ))}
       </View>
     );

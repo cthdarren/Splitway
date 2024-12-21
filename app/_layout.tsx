@@ -9,7 +9,7 @@ export default function RootLayout() {
         <LanguageProvider>
             <ThemeProvider>
                 <CurrencyProvider>
-                    <App/>
+                    <App />
                 </CurrencyProvider>
             </ThemeProvider>
         </LanguageProvider>
@@ -23,7 +23,8 @@ function App() {
             screenOptions={{
                 headerShown: false,
                 statusBarStyle: theme == "dark" ? "dark" : "light",
-            }}
-        />
+            }}>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
     );
 }
