@@ -4,7 +4,7 @@ import { useThemeContext } from "@/contexts/ThemeContext";
 export default function Tab() {
     const { theme, setTheme } = useThemeContext();
     var toChange = strings.LIGHT_THEME_NAME;
-    if (theme == strings.LIGHT_THEME_NAME) {
+    if (theme === strings.LIGHT_THEME_NAME) {
         toChange = strings.DARK_THEME_NAME;
     }
 

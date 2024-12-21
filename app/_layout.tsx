@@ -23,7 +23,7 @@ function App() {
         <Stack
             screenOptions={{
                 headerShown: false,
-                statusBarStyle: theme == strings.LIGHT_THEME_NAME ? "light" : "dark",
+                statusBarStyle: theme === strings.LIGHT_THEME_NAME ? "light" : "dark",
             }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>

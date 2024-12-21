@@ -1,7 +1,8 @@
 import GroupCard from "@/components/GroupCard";
 import strings from "@/i18n/en.json";
-import { Text, View, Button, ScrollView } from "react-native";
+import { Text, View, ScrollView } from "react-native";
 import { groupData, returnData } from "@/types/networkresponses";
+import { Link } from "expo-router";
 
 function getGroupsData() {
   const data: returnData = {
@@ -36,10 +37,23 @@ export default function Index() {
   return (
     <View className="flex py-5 px-8 h-full">
       <Text className="text-3xl">{strings.APP_NAME}</Text>
-      <Text className="font-bold text-2xl mt-10">{strings.GROUPS_HEADER}</Text>
+      <View className="flex flex-row justify-between">
+        <Text className="font-bold text-2xl mt-10">
+          {strings.GROUPS_HEADER}
+        </Text>
+        <Link href={"/group/create"} className="text-lg mt-10 color-blue-500">
+          {strings.CREATE_GROUP_BUTTON}
+        </Link>
+      </View>
       <ScrollView className="py-5">
         {data.map((x) => (
-          <GroupCard key={x.id} id={x.id} title={x.name} expenditure={x.expenditure} currency={x.currency} />
+          <GroupCard
+            key={x.id}
+            id={x.id}
+            title={x.name}
+            expenditure={x.expenditure}
+            currency={x.currency}
+          />
         ))}
       </ScrollView>
     </View>

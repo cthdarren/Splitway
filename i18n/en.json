@@ -5,4 +5,12 @@
   "CHANGE_THEME_SETTING": "Change theme",
   "LIGHT_THEME_NAME": "light",
   "DARK_THEME_NAME": "dark",
+  "BACK_BUTTON_TEXT": "Back",
+  "CREATE_GROUP_BUTTON": "Create group",
+  "CREATE_GROUP_HEADER": "Create a new group",
+  "CREATE_GROUP_GROUP_NAME_LABEL": "Group Name",
+  "CREATE_GROUP_CURRENCY_LABEL": "Currency",
+  "CREATE_GROUP_PARTICIPANTS_LABEL": "Participants",
+  "CREATE_GROUP_SAVE_BUTTON": "Create",
+  "CREATE_GROUP_ADD_PARTICIPANTS": "Person",
 }
