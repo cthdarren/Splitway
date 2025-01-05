@@ -1,7 +1,6 @@
+import BackButton from "@/components/BackButton";
 import strings from "@/i18n/en.json";
 import { Entypo } from "@expo/vector-icons";
-import FontAwesome from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
 import React from "react";
 import { ReactElement, useState } from "react";
 import {
@@ -40,16 +39,7 @@ export default function Create() {
   return (
     <View className="flex py-5 h-full">
       <View className="flex flex-row px-8 justify-between">
-        <TouchableOpacity
-          className="pr-10 pt-2 pb-5"
-          onPress={() => router.back()}>
-          <FontAwesome
-            size={20}
-            className="flex items-center"
-            name="arrow-back"
-            color={"#000"}
-          />
-        </TouchableOpacity>
+        <BackButton/>
         <TouchableOpacity className="pl-2 pt-2 pb-5 ">
           <Text className="text-xl">{strings.CREATE_GROUP_SAVE_BUTTON}</Text>
         </TouchableOpacity>
