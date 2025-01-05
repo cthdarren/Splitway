@@ -1,5 +1,6 @@
 {
   "APP_NAME": "SplitWay",
+  "LOGIN_TEXT": "Login",
   "GROUPS_HEADER": "Groups",
   "SETTINGS_HEADER": "Settings",
   "CHANGE_THEME_SETTING": "Change theme",

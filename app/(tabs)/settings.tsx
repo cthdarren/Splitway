@@ -1,6 +1,7 @@
 import strings from "@/i18n/en.json";
 import { View, Text, StyleSheet, Button, ScrollView } from "react-native";
 import { useThemeContext } from "@/contexts/ThemeContext";
+import ScreenWrapper from "@/components/ScreenWrapper";
 export default function Tab() {
     const { theme, setTheme } = useThemeContext();
     var toChange = strings.LIGHT_THEME_NAME;
@@ -9,8 +10,7 @@ export default function Tab() {
     }
 
     return (
-        <View className="flex py-5 px-8 h-full">
-            <Text className="text-3xl">{strings.APP_NAME}</Text>
+        <ScreenWrapper>
             <Text className="font-bold text-2xl mt-10">
                 {strings.SETTINGS_HEADER}
             </Text>
@@ -25,6 +25,6 @@ export default function Tab() {
                     />
                 </View>
             </ScrollView>
-        </View>
+        </ScreenWrapper>
     );
 }

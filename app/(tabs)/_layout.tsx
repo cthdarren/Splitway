@@ -1,5 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
+import { View } from "react-native";
 
 export default function TabLayout() {
     return (
@@ -9,20 +10,20 @@ export default function TabLayout() {
                 tabBarActiveTintColor: "blue",
             }}>
             <Tabs.Screen
-                name="index"
-                options={{
-                    title: "Groups",
-                    tabBarIcon: ({ color }) => (
-                        <FontAwesome size={20} name="group" color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
                 name="settle"
                 options={{
                     title: "Settle",
                     tabBarIcon: ({ color }) => (
                         <FontAwesome size={20} name="credit-card" color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: "Groups",
+                    tabBarIcon: ({ color }) => (
+                        <FontAwesome size={20} name="group" color={color} />
                     ),
                 }}
             />
