@@ -39,14 +39,14 @@ export default function Index() {
     return (
         <ScreenWrapper>
             <View className="flex flex-row justify-between">
-                <Text className="font-bold text-2xl mt-10">
+                <Text className="font-bold text-2xl mt-10 pb-3">
                     {strings.GROUPS_HEADER}
                 </Text>
-                <Link href={"/group/create"} className="text-lg mt-10 color-blue-500">
+                <Link href={"/group/create"} className="text-lg mt-7 pt-3 pb-3 color-blue-500">
                     {strings.CREATE_GROUP_BUTTON}
                 </Link>
             </View>
-            <ScrollView className="py-5">
+            <ScrollView className="py-2">
                 {data.map((x) => (
                     <GroupCard
                         key={x.id}

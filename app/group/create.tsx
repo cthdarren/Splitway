@@ -11,6 +11,7 @@ import {
   View,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 
 export default function Create() {
@@ -39,17 +40,19 @@ export default function Create() {
   return (
     <View className="flex py-5 h-full">
       <View className="flex flex-row px-8 justify-between">
-        <Pressable className="pr-10 pt-2 pb-5" onPress={() => router.back()}>
+        <TouchableOpacity
+          className="pr-10 pt-2 pb-5"
+          onPress={() => router.back()}>
           <FontAwesome
             size={20}
             className="flex items-center"
             name="arrow-back"
             color={"#000"}
           />
-        </Pressable>
-        <Text className="pt-2 pb-5 text-xl">
-          {strings.CREATE_GROUP_SAVE_BUTTON}
-        </Text>
+        </TouchableOpacity>
+        <TouchableOpacity className="pl-2 pt-2 pb-5 ">
+          <Text className="text-xl">{strings.CREATE_GROUP_SAVE_BUTTON}</Text>
+        </TouchableOpacity>
       </View>
       <ScrollView className="px-8">
         <Text className="text-4xl mt-3">{strings.CREATE_GROUP_HEADER}</Text>
