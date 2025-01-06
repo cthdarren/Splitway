@@ -47,7 +47,7 @@ export default function Group() {
     const data = getGroupData(groupId);
     return (
       <View className="h-full">
-        <View className={`bg-${styles.secondary}`}>
+        <View className={`bg-[${styles.secondary}]`}>
           <View className="px-8 py-5 flex flex-row items-center justify-between">
             <BackButton />
             <TouchableOpacity className="pb-5 pt-2">
@@ -55,7 +55,7 @@ export default function Group() {
             </TouchableOpacity>
           </View>
         </View>
-        <View className={`bg-${styles.secondary}`}>
+        <View className={`bg-[${styles.secondary}]`}>
           <Text className="px-8 text-3xl font-bold pb-5">{data.name}</Text>
           <Text className="px-8 my-5 text-xl">
             Total Expenditure:{" "}
