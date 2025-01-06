@@ -7,6 +7,7 @@
   "LIGHT_THEME_NAME": "light",
   "DARK_THEME_NAME": "dark",
   "BACK_BUTTON_TEXT": "Back",
+
   "CREATE_GROUP_BUTTON": "Create group",
   "CREATE_GROUP_HEADER": "Create a new group",
   "CREATE_GROUP_GROUP_NAME_LABEL": "Group Name",
@@ -14,4 +15,16 @@
   "CREATE_GROUP_PARTICIPANTS_LABEL": "Participants",
   "CREATE_GROUP_SAVE_BUTTON": "Create",
   "CREATE_GROUP_ADD_PARTICIPANTS": "Person",
+
+  "CREATE_EXPENSE_SAVE_BUTTON": "Create",
+  "CREATE_EXPENSE_HEADER": "Creating new expense for: ",
+  "CREATE_EXPENSE_SCAN_RECEIPT": "Scan receipt",
+  "CREATE_EXPENSE_CATEGORY": "Category",
+  "CREATE_EXPENSE_NAME": "Expense Name",
+  "CREATE_EXPENSE_AMOUNT": "Total Amount",
+  "CREATE_EXPENSE_PAYER": "Who paid?",
+  "CREATE_EXPENSE_SPLIT": "Split",
+  "CREATE_EXPENSE_SPLIT_UNEVEN": "Split unevenly",
+  "CREATE_EXPENSE_SPLIT_EVEN": "Split evenly",
+  "CREATE_EXPENSE_SELECT_PARTICIPANTS": "Select participants",
 }

@@ -1,5 +1,6 @@
 import BackButton from "@/components/BackButton";
 import strings from "@/i18n/en.json";
+import styles from "@/styles/customStyles";
 import { Entypo } from "@expo/vector-icons";
 import React from "react";
 import { ReactElement, useState } from "react";
@@ -74,7 +75,7 @@ export default function Create() {
               <View
                 key={index + 1}
                 className={
-                  `${focused === index + 1 ? "border-[#000]" : "border-[#aaa]"}` +
+                  `${focused === index + 1 ? `border-${styles.primary}` : `border-${styles.inactive}`}` +
                   " flex flex-row justify-between border rounded-md mt-3"
                 }>
                 <TextInput
@@ -94,7 +95,7 @@ export default function Create() {
                     <Entypo
                       name="cross"
                       size={20}
-                      color={`${focused === index + 1 ? "#000" : "#aaa"}`}
+                      color={`${focused === index + 1 ? styles.primary : styles.inactive}`}
                     />
                   </Pressable>
                 ) : (
