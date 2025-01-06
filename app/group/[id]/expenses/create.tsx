@@ -113,8 +113,8 @@ export default function Create() {
               focused={focused}
               elementIndex={2}
               setFocused={setFocused}
-              onChangeFunc={setExpenseName}
-              value={expenseName}
+              onChangeFunc={setExpenseAmount}
+              value={expenseAmount}
               placeholder={strings.CREATE_EXPENSE_AMOUNT}
             />
             <Text className="text-lg mt-10">
@@ -124,8 +124,8 @@ export default function Create() {
               focused={focused}
               elementIndex={3}
               setFocused={setFocused}
-              onChangeFunc={setExpenseName}
-              value={expenseName}
+              onChangeFunc={setExpensePayer}
+              value={expensePayer}
               placeholder={strings.CREATE_EXPENSE_PAYER}
             />
             <Text className="text-lg mt-10">

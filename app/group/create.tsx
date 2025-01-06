@@ -75,7 +75,7 @@ export default function Create() {
               <View
                 key={index + 1}
                 className={
-                  `${focused === index + 1 ? `border-${styles.primary}` : `border-${styles.inactive}`}` +
+                  `${focused === index + 1 ? `border-[${styles.primary}]` : `border-[${styles.inactive}]`}` +
                   " flex flex-row justify-between border rounded-md mt-3"
                 }>
                 <TextInput
@@ -89,15 +89,15 @@ export default function Create() {
                   }
                 />
                 {participants.length > 1 ? (
-                  <Pressable
-                    className="flex flex-col pr-3 justify-center"
+                  <TouchableOpacity
+                    className="flex flex-col px-3 justify-center"
                     onPress={() => deleteParticipant(index)}>
                     <Entypo
                       name="cross"
                       size={20}
                       color={`${focused === index + 1 ? styles.primary : styles.inactive}`}
                     />
-                  </Pressable>
+                  </TouchableOpacity>
                 ) : (
                   <React.Fragment></React.Fragment>
                 )}

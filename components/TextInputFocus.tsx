@@ -13,7 +13,7 @@ function TextInputFocus({
   return (
     <TextInput
       className={
-        `${focused === elementIndex ? `border-${styles.primary}` : `border-${styles.inactive}`}` +
+        `${focused === elementIndex ? `border-[${styles.primary}]` : `border-[${styles.inactive}]`}` +
         " border rounded-md px-3 py-5 mt-3"
       }
       onFocus={() => setFocused(elementIndex)}
