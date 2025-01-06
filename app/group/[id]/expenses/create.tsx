@@ -1,6 +1,8 @@
 import BackButton from "@/components/BackButton";
+import Checkbox from "react-native-check-box";
 import TextInputFocus from "@/components/TextInputFocus";
 import strings from "@/i18n/en.json";
+import styles from "@/styles/customStyles";
 import { Entypo } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
@@ -57,7 +59,24 @@ export default function Create() {
   const [expenseName, setExpenseName] = useState("");
   const [expenseAmount, setExpenseAmount] = useState("");
   const [expensePayer, setExpensePayer] = useState("");
+  const [splitType, setSplitType] = useState(0);
   const [focused, setFocused] = useState<number | null>(null);
+  const [participants, setParticipants] = useState<number[]>([]);
+
+  const toggleCheckParticipant = (id: number) => {
+    const newParticipantList = [...participants];
+    if (participantIsChecked(id)) {
+      newParticipantList.splice(newParticipantList.indexOf(id), 1);
+    } else {
+      newParticipantList.push(id);
+    }
+    setParticipants(newParticipantList);
+  };
+
+  const participantIsChecked = (id: number) => {
+    return participants.indexOf(id) !== -1;
+  };
+
   const params = useLocalSearchParams();
   if (typeof params.id === "string") {
     const groupId = parseInt(params.id);
@@ -132,18 +151,40 @@ export default function Create() {
               {strings.CREATE_EXPENSE_SPLIT}
             </Text>
             <View className="flex flex-row justify-between w-full">
-                            <TouchableOpacity className="border-black border rounded-md mr-10 py-5 flex-grow">
-                                <Text className="w-full text-center">
-                                    {strings.CREATE_EXPENSE_SPLIT_EVEN}
-                                </Text>
-                            </TouchableOpacity>
+              <TouchableOpacity
+                className={`border-[${splitType === 0 ? styles.primary : styles.inactive}] border rounded-md py-5 mr-10 flex-grow`}
+                onPress={() => {
+                  setSplitType(0);
+                }}>
+                <Text className="w-full text-center">
+                  {strings.CREATE_EXPENSE_SPLIT_EVEN}
+                </Text>
+              </TouchableOpacity>
 
-                            <TouchableOpacity className="border-black border rounded-md py-5 flex-grow">
-                                <Text className="w-full text-center">
-                                    {strings.CREATE_EXPENSE_SPLIT_UNEVEN}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+              <TouchableOpacity
+                className={`border-[${splitType === 1 ? styles.primary : styles.inactive}] border rounded-md py-5 flex-grow`}
+                onPress={() => {
+                  setSplitType(1);
+                }}>
+                <Text className="w-full text-center">
+                  {strings.CREATE_EXPENSE_SPLIT_UNEVEN}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {data.members.map((member) => {
+              return (
+                <View className="flex mt-5 flex-row">
+                  <Checkbox
+                    onClick={() => {
+                      toggleCheckParticipant(member.id);
+                    }}
+                    isChecked={participantIsChecked(member.id)}
+                  />
+                  <Text>{member.name}</Text>
+                </View>
+              );
+            })}
           </View>
         </ScrollView>
       </View>
