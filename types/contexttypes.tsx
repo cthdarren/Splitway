@@ -1,3 +1,4 @@
+// TODO CHANGE ALL TYPES TO CAPITAL
 export type languageContextType = {
     language: string;
     setLanguage: React.Dispatch<React.SetStateAction<string>>;

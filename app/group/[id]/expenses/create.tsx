@@ -24,6 +24,9 @@ import {
 } from "@/types/networkresponses";
 import { category, userModel } from "@/types/models";
 import MyDropdown from "@/components/MyDropdown";
+import { MyErrors } from "@/types/errors/myerrors";
+import { Float } from "react-native/Libraries/Types/CodegenTypes";
+import ErrorField from "@/components/ErrorField";
 
 const getCategories = (): category[] => {
     // axios request to backend to return list of categories
@@ -91,34 +94,18 @@ function getGroupData(id: number): groupData {
 export default function Create() {
     const [category, setCategory] = useState<string | null>(null);
     const [expenseName, setExpenseName] = useState("");
-    const [expenseAmount, setExpenseAmount] = useState(0);
+    const [expenseAmount, setExpenseAmount] = useState<string>("");
     const [expensePayerId, setExpensePayerId] = useState<string | null>(null);
     const [splitType, setSplitType] = useState(0);
     const [focused, setFocused] = useState<number | null>(null);
     const [participants, setParticipants] = useState<expenseParticipant[]>([]);
-
-    const submitExpenseData = () => {
-        // TODO axios POST request to backend
-
-        if (category !== null && expensePayerId !== null) {
-            const data: createExpenseData = {
-                // parse back into int because of react dropdown wants keys in a string form
-                categoryId: parseInt(category),
-                expenseName: expenseName,
-                totalAmount: expenseAmount,
-                // parse back into int because of react dropdown wants keys in a string form
-                payerId: parseInt(expensePayerId),
-                splitType: splitType === 1,
-                participants: participants
-            };
-            console.log(data);
-        } else console.log("Fill in category and expense payer");
-    };
+    const [errors, setErrors] = useState<MyErrors[]>([]);
+    const categoryData: category[] = getCategories();
 
     //==================================================
     //  SPLIT RELATED FUNCTIONS
     //
-    //  Many of these functions are here due to how i 
+    //  Many of these functions are here due to how i
     //  chose to store the values of the participants
     //  especially when performing an uneven split.
     //  I wanted to keep just one state variable for
@@ -134,7 +121,7 @@ export default function Create() {
         setSplitType(splittype);
     };
 
-    // to obtain the amount to pay by each participant, tied to the participants state array 
+    // to obtain the amount to pay by each participant, tied to the participants state array
     // basically just getting the value, but i had to do some manipulationg because of how i'm
     // storing the data in state and making sure that it doesn't crash
     const getParticipantSplit = (id: number): string => {
@@ -195,12 +182,57 @@ export default function Create() {
     // SPLIT RELATED FUCNTIONS END
     //==================================================
 
-
     const params = useLocalSearchParams();
     if (typeof params.id === "string") {
         const groupId: number = parseInt(params.id);
         const data: groupData = getGroupData(groupId);
-        const categoryData: category[] = getCategories();
+
+        const validateFields = () => {
+            setErrors([])
+            const newErrors:MyErrors[] = []
+            if (category == null || categoryData.find(cat => (cat.id === parseInt(category))) === undefined){
+                newErrors.push({inputIndex: 0, error: "Invalid category!"})
+            }
+            if (expenseName === "") {
+                newErrors.push({inputIndex: 1, error: "Invalid expense name!"})
+            } 
+            const tmpAmt = parseFloat(expenseAmount)
+            if (isNaN(tmpAmt) || tmpAmt <= 0 || expenseAmount == null) {
+                newErrors.push({inputIndex: 2, error: "Invalid expense amount!"})
+            } 
+            if (expensePayerId === null || data.members.find(member => member.id === parseInt(expensePayerId)) === undefined){
+                newErrors.push({inputIndex: 3, error: "Invalid payer!"})
+            }
+            // if there are no participants OR if it's an uneven split and one of the participants has an empty/non positive value
+            if (participants.length === 0 || splitType === 1 && participants.filter(part => part.expenseAmount == null || part.expenseAmount <= 0)){
+                newErrors.push({inputIndex: 4, error: "Invalid split!"})
+            }
+            setErrors(newErrors)
+            if (newErrors.length > 0)
+                return false
+            return true
+        };
+
+        const submitExpenseData = () => {
+            // TODO axios POST request to backend
+            if (!validateFields()){
+                return
+            }
+            if (category !== null && expensePayerId !== null) {
+                const data: createExpenseData = {
+                    // parse back into int because of react dropdown wants keys in a string form
+                    categoryId: parseInt(category),
+                    expenseName: expenseName,
+                    totalAmount: parseFloat(expenseAmount),
+                    // parse back into int because of react dropdown wants keys in a string form
+                    payerId: parseInt(expensePayerId),
+                    splitType: splitType === 1,
+                    participants: participants
+                };
+                console.log(data);
+            } else console.log("Fill in category and expense payer");
+        };
+
 
         // format categoryData for dropdown
         const categorySelectData = categoryData.map((category) => ({
@@ -245,6 +277,7 @@ export default function Create() {
                             value={category}
                             placeholder={undefined}
                         />
+                        <ErrorField errors={errors} inputIndex={0} />
                         <Text className="text-lg mt-10">
                             {strings.CREATE_EXPENSE_NAME}
                         </Text>
@@ -256,11 +289,12 @@ export default function Create() {
                             value={expenseName}
                             placeholder={strings.CREATE_EXPENSE_NAME}
                         />
-
+                        <ErrorField errors={errors} inputIndex={1} />
                         <Text className="text-lg mt-10">
                             {strings.CREATE_EXPENSE_AMOUNT}
                         </Text>
                         <TextInputFocus
+                            keyboardType="numeric"
                             focused={focused}
                             elementIndex={2}
                             setFocused={setFocused}
@@ -268,6 +302,7 @@ export default function Create() {
                             value={expenseAmount}
                             placeholder={strings.CREATE_EXPENSE_AMOUNT}
                         />
+                        <ErrorField errors={errors} inputIndex={2} />
                         <Text className="text-lg mt-10 mb-3">
                             {strings.CREATE_EXPENSE_PAYER}
                         </Text>
@@ -280,9 +315,12 @@ export default function Create() {
                             value={expensePayerId}
                             placeholder={strings.CREATE_EXPENSE_PAYER}
                         />
+                        <ErrorField errors={errors} inputIndex={3} />
                         <Text className="text-lg mt-10 mb-3">
                             {strings.CREATE_EXPENSE_SPLIT}
                         </Text>
+
+                        <ErrorField errors={errors} inputIndex={4} />
                         <View className="flex flex-row justify-between w-full">
                             <TouchableOpacity
                                 className={`border-[${splitType === 0 ? styles.primary : styles.inactive}] border rounded-md py-5 mr-10 flex-grow`}
