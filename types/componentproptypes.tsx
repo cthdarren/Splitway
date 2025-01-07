@@ -9,7 +9,7 @@ export type TextInputFocusProps= {
     focused: number | null; 
     elementIndex: number; 
     setFocused: React.Dispatch<React.SetStateAction<number | null>>; 
-    onChangeFunc: React.Dispatch<React.SetStateAction<string>>; 
-    value :string; 
+    onChangeFunc: React.Dispatch<React.SetStateAction<any>>; 
+    value :any; 
     placeholder: string 
 };

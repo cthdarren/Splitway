@@ -14,11 +14,41 @@ import {
   TextInput,
   TouchableOpacity,
   Button,
+  Pressable,
 } from "react-native";
+import {
+  createExpenseData,
+  expenseParticipant,
+  groupData,
+} from "@/types/networkresponses";
+import { SelectList } from "react-native-dropdown-select-list";
+import { category, userModel } from "@/types/models";
 
-function getGroupData(id: number) {
+const getCategories = (): category[] => {
+  // axios request to backend to return list of categories
+  return [
+    {
+      id: 1,
+      name: "Food",
+    },
+    {
+      id: 2,
+      name: "Transport",
+    },
+    {
+      id: 3,
+      name: "Leisure",
+    },
+    {
+      id: 4,
+      name: "Misc.",
+    },
+  ];
+};
+function getGroupData(id: number): groupData {
   if (id === 1) {
     return {
+      id: id,
       name: "Japan Trip",
       currency: "JPY",
       expenditure: 500,
@@ -36,6 +66,7 @@ function getGroupData(id: number) {
     };
   } else {
     return {
+      id: id,
       name: "Japan Trip but ID IS NOT 1",
       currency: "JPY",
       expenditure: 500,
@@ -55,37 +86,101 @@ function getGroupData(id: number) {
 }
 
 export default function Create() {
-  const [groupname, setGroupname] = useState("");
+  const [category, setCategory] = useState<number | null>(null);
   const [expenseName, setExpenseName] = useState("");
-  const [expenseAmount, setExpenseAmount] = useState("");
-  const [expensePayer, setExpensePayer] = useState("");
+  const [expenseAmount, setExpenseAmount] = useState(0);
+  const [expensePayerId, setExpensePayerId] = useState<number | null>(null);
   const [splitType, setSplitType] = useState(0);
   const [focused, setFocused] = useState<number | null>(null);
-  const [participants, setParticipants] = useState<number[]>([]);
+  const [participants, setParticipants] = useState<expenseParticipant[]>([]);
 
-  const toggleCheckParticipant = (id: number) => {
+  const submitExpenseData = () => {
+    // TODO axios POST request to backend
+
+    if (category !== null && expensePayerId !== null) {
+      const data: createExpenseData = {
+        categoryId: category,
+        expenseName: expenseName,
+        totalAmount: expenseAmount,
+        payerId: expensePayerId,
+        splitType: splitType === 1,
+        participants: participants,
+      };
+    console.log(data)
+    }
+    else 
+    console.log("Fill in category and expense payer")
+  };
+
+    const changeSplitType = (splittype :number) => {
+        const newParticipantList = [...participants];
+        newParticipantList.map(participants => (participants.expenseAmount = null))
+        setSplitType(splittype)
+    }
+
+
+    const getParticipantSplit = (id: number) :string => {
+        const expenseAmt = participants.find(part => part.id === id)?.expenseAmount
+        if (expenseAmt === undefined ||  expenseAmt === null)
+            return ""
+        return expenseAmt.toString()
+    }
+
+  const editParticipantSplit = (id: number, newAmount: string) => {
     const newParticipantList = [...participants];
-    if (participantIsChecked(id)) {
-      newParticipantList.splice(newParticipantList.indexOf(id), 1);
+    const participantIndex = participants.findIndex(
+      (existingParticipant) => existingParticipant.id == id,
+    );
+    if (participantIndex !== -1) {
+      newParticipantList[participantIndex].expenseAmount = parseInt(newAmount) || null;
+      setParticipants(newParticipantList);
+    }
+  };
+
+  const toggleCheckParticipant = (newParticipant: userModel) => {
+    const newParticipantList = [...participants];
+    if (participantIsChecked(newParticipant)) {
+      newParticipantList.splice(
+        newParticipantList.findIndex(
+          (existingParticipant) => existingParticipant.id == newParticipant.id,
+        ),
+        1,
+      );
     } else {
-      newParticipantList.push(id);
+      const newExpenseParticipant: expenseParticipant = {
+        id: newParticipant.id,
+        expenseAmount: null,
+      };
+      newParticipantList.push(newExpenseParticipant);
     }
     setParticipants(newParticipantList);
   };
 
-  const participantIsChecked = (id: number) => {
-    return participants.indexOf(id) !== -1;
+  const participantIsChecked = (newParticipant: userModel) => {
+    return (
+      participants.findIndex(
+        (existingParticipant) => existingParticipant.id == newParticipant.id,
+      ) !== -1
+    );
   };
 
   const params = useLocalSearchParams();
   if (typeof params.id === "string") {
-    const groupId = parseInt(params.id);
-    const data = getGroupData(groupId);
+    const groupId: number = parseInt(params.id);
+    const data: groupData = getGroupData(groupId);
+    const categoryData: category[] = getCategories();
+
+    // format categoryData for dropdown
+    const categorySelectData = categoryData.map((category) => ({
+      key: category.id,
+      value: category.name,
+    }));
+
     return (
       <View className="flex py-5 h-full">
         <View className="flex flex-row px-8 justify-between">
           <BackButton />
-          <TouchableOpacity className="pl-2 pt-2 pb-5 ">
+          <TouchableOpacity onPress={() => submitExpenseData()} className="pl-2 pt-2 pb-5 ">
             <Text className="text-xl">{strings.CREATE_GROUP_SAVE_BUTTON}</Text>
           </TouchableOpacity>
         </View>
@@ -97,23 +192,10 @@ export default function Create() {
             <Text className="text-lg mt-5">
               {strings.CREATE_EXPENSE_CATEGORY}
             </Text>
-            {
-              // REPLACE WITH DROP DOWN
-            }
-            <TextInput
-              className={
-                `${focused === 0 ? "border-[#000]" : "border-[#aaa]"}` +
-                " border rounded-md px-3 py-5 mt-3"
-              }
-              onFocus={() => setFocused(0)}
-              onEndEditing={() => setFocused(null)}
-              onChangeText={setGroupname}
-              value={groupname}
-              placeholder={strings.CREATE_GROUP_GROUP_NAME_LABEL}
-            />
-            {
-              // =====================
-            }
+            <SelectList
+              setSelected={(value: number) => setCategory(value)}
+              data={categorySelectData}
+              save="key"></SelectList>
 
             <Text className="text-lg mt-10">{strings.CREATE_EXPENSE_NAME}</Text>
             <TextInputFocus
@@ -139,14 +221,20 @@ export default function Create() {
             <Text className="text-lg mt-10">
               {strings.CREATE_EXPENSE_PAYER}
             </Text>
+            {
+              // DROPDOWN as well
+            }
             <TextInputFocus
               focused={focused}
               elementIndex={3}
               setFocused={setFocused}
-              onChangeFunc={setExpensePayer}
-              value={expensePayer}
+              onChangeFunc={setExpensePayerId}
+              value={expensePayerId}
               placeholder={strings.CREATE_EXPENSE_PAYER}
             />
+            {
+              // ===============
+            }
             <Text className="text-lg mt-10">
               {strings.CREATE_EXPENSE_SPLIT}
             </Text>
@@ -154,7 +242,7 @@ export default function Create() {
               <TouchableOpacity
                 className={`border-[${splitType === 0 ? styles.primary : styles.inactive}] border rounded-md py-5 mr-10 flex-grow`}
                 onPress={() => {
-                  setSplitType(0);
+                  changeSplitType(0);
                 }}>
                 <Text className="w-full text-center">
                   {strings.CREATE_EXPENSE_SPLIT_EVEN}
@@ -164,7 +252,7 @@ export default function Create() {
               <TouchableOpacity
                 className={`border-[${splitType === 1 ? styles.primary : styles.inactive}] border rounded-md py-5 flex-grow`}
                 onPress={() => {
-                  setSplitType(1);
+                  changeSplitType(1);
                 }}>
                 <Text className="w-full text-center">
                   {strings.CREATE_EXPENSE_SPLIT_UNEVEN}
@@ -172,16 +260,57 @@ export default function Create() {
               </TouchableOpacity>
             </View>
 
-            {data.members.map((member) => {
+            {data.members.map((member, index) => {
               return (
-                <View className="flex mt-5 flex-row">
+                <View
+                  className="flex mt-2 flex-row items-center"
+                  key={member.id}>
                   <Checkbox
+                    style={{ paddingVertical: 6 }}
                     onClick={() => {
-                      toggleCheckParticipant(member.id);
+                      toggleCheckParticipant(member);
                     }}
-                    isChecked={participantIsChecked(member.id)}
+                    isChecked={participantIsChecked(member)}
                   />
-                  <Text>{member.name}</Text>
+                  <View className="flex flex-row justify-between items-center flex-grow">
+                    <Pressable
+                      className="py-3"
+                      onPress={() => {
+                        toggleCheckParticipant(member);
+                      }}>
+                      <Text
+                        style={{
+                          borderColor: "transparent",
+                          borderStyle: "solid",
+                          borderWidth: 1,
+                        }}
+                        className="text-lg pl-5">
+                        {member.name}
+                      </Text>
+                    </Pressable>
+                    {splitType === 1 ? (
+                      participantIsChecked(member) ? (
+                        <TextInput
+                        keyboardType="numeric"
+                          value={getParticipantSplit(member.id)}
+                          onChangeText={(value) => {
+                            editParticipantSplit(member.id, value);
+                          }}
+                          placeholder={
+                            strings.CREATE_EXPENSE_SPLIT_UNEVEN_INDIV_AMOUNT
+                          }
+                          className={`border-b rounded-lg px-3 color-black w-32`}
+                        />
+                      ) : (
+                        <React.Fragment></React.Fragment>
+                      )
+                    ) : (
+                      <TextInput
+                        editable={false}
+                        className="border-0 color-transparent"
+                      />
+                    )}
+                  </View>
                 </View>
               );
             })}
