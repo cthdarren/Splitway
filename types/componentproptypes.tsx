@@ -13,3 +13,13 @@ export type TextInputFocusProps= {
     value :any; 
     placeholder: string 
 };
+
+export type MyDropdownProps= {
+    focused: number | null; 
+    elementIndex: number; 
+    data: any[];
+    setFocused: React.Dispatch<React.SetStateAction<number | null>>; 
+    onChangeFunc: React.Dispatch<React.SetStateAction<any>>; 
+    value :any; 
+    placeholder: string | undefined;
+};

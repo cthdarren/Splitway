@@ -1,6 +1,7 @@
 import BackButton from "@/components/BackButton";
 import Checkbox from "react-native-check-box";
 import TextInputFocus from "@/components/TextInputFocus";
+import { Dropdown } from "react-native-element-dropdown";
 import strings from "@/i18n/en.json";
 import styles from "@/styles/customStyles";
 import { Entypo } from "@expo/vector-icons";
@@ -21,8 +22,8 @@ import {
     expenseParticipant,
     groupData
 } from "@/types/networkresponses";
-import { SelectList } from "react-native-dropdown-select-list";
 import { category, userModel } from "@/types/models";
+import MyDropdown from "@/components/MyDropdown";
 
 const getCategories = (): category[] => {
     // axios request to backend to return list of categories
@@ -46,6 +47,8 @@ const getCategories = (): category[] => {
     ];
 };
 function getGroupData(id: number): groupData {
+    // axios request to GET group data.
+    // in groupId, out group data json
     if (id === 1) {
         return {
             id: id,
@@ -86,10 +89,10 @@ function getGroupData(id: number): groupData {
 }
 
 export default function Create() {
-    const [category, setCategory] = useState<number | null>(null);
+    const [category, setCategory] = useState<string | null>(null);
     const [expenseName, setExpenseName] = useState("");
     const [expenseAmount, setExpenseAmount] = useState(0);
-    const [expensePayerId, setExpensePayerId] = useState<number | null>(null);
+    const [expensePayerId, setExpensePayerId] = useState<string | null>(null);
     const [splitType, setSplitType] = useState(0);
     const [focused, setFocused] = useState<number | null>(null);
     const [participants, setParticipants] = useState<expenseParticipant[]>([]);
@@ -99,10 +102,12 @@ export default function Create() {
 
         if (category !== null && expensePayerId !== null) {
             const data: createExpenseData = {
-                categoryId: category,
+                // parse back into int because of react dropdown wants keys in a string form
+                categoryId: parseInt(category),
                 expenseName: expenseName,
                 totalAmount: expenseAmount,
-                payerId: expensePayerId,
+                // parse back into int because of react dropdown wants keys in a string form
+                payerId: parseInt(expensePayerId),
                 splitType: splitType === 1,
                 participants: participants
             };
@@ -110,6 +115,17 @@ export default function Create() {
         } else console.log("Fill in category and expense payer");
     };
 
+    //==================================================
+    //  SPLIT RELATED FUNCTIONS
+    //
+    //  Many of these functions are here due to how i 
+    //  chose to store the values of the participants
+    //  especially when performing an uneven split.
+    //  I wanted to keep just one state variable for
+    //  both even and uneven splits
+    //==================================================
+
+    // used to reset the values of the inputs when changing between uneven and even split
     const changeSplitType = (splittype: number) => {
         const newParticipantList = [...participants];
         newParticipantList.map(
@@ -118,6 +134,9 @@ export default function Create() {
         setSplitType(splittype);
     };
 
+    // to obtain the amount to pay by each participant, tied to the participants state array 
+    // basically just getting the value, but i had to do some manipulationg because of how i'm
+    // storing the data in state and making sure that it doesn't crash
     const getParticipantSplit = (id: number): string => {
         const expenseAmt = participants.find(
             (part) => part.id === id
@@ -126,6 +145,9 @@ export default function Create() {
         return expenseAmt.toString();
     };
 
+    // to edit the amount to pay by each participant, tied to the participants state array
+    // basically just the onChange, but i had to do some manipulationg because of how i'm
+    // storing the data in state
     const editParticipantSplit = (id: number, newAmount: string) => {
         const newParticipantList = [...participants];
         const participantIndex = participants.findIndex(
@@ -138,6 +160,7 @@ export default function Create() {
         }
     };
 
+    // Check or uncheck specified participant
     const toggleCheckParticipant = (newParticipant: userModel) => {
         const newParticipantList = [...participants];
         if (participantIsChecked(newParticipant)) {
@@ -158,6 +181,7 @@ export default function Create() {
         setParticipants(newParticipantList);
     };
 
+    // Check if participant has been marked as included in the bill
     const participantIsChecked = (newParticipant: userModel) => {
         return (
             participants.findIndex(
@@ -167,6 +191,11 @@ export default function Create() {
         );
     };
 
+    //==================================================
+    // SPLIT RELATED FUCNTIONS END
+    //==================================================
+
+
     const params = useLocalSearchParams();
     if (typeof params.id === "string") {
         const groupId: number = parseInt(params.id);
@@ -175,8 +204,16 @@ export default function Create() {
 
         // format categoryData for dropdown
         const categorySelectData = categoryData.map((category) => ({
-            key: category.id,
-            value: category.name
+            // react dropdown for some reason wants value to be a string so, so be it
+            value: category.id.toString(),
+            label: category.name
+        }));
+
+        // format member data for dropdown
+        const memberData = data.members.map((member) => ({
+            // react dropdown for some reason wants value to be a string so, so be it
+            value: member.id.toString(),
+            label: member.name
         }));
 
         return (
@@ -196,14 +233,18 @@ export default function Create() {
                         {strings.CREATE_EXPENSE_HEADER + data.name}
                     </Text>
                     <View className="flex flex-col py-5">
-                        <Text className="text-lg mt-5">
+                        <Text className="text-lg mt-5 mb-3">
                             {strings.CREATE_EXPENSE_CATEGORY}
                         </Text>
-                        <SelectList
-                            setSelected={(value: number) => setCategory(value)}
+                        <MyDropdown
+                            focused={focused}
+                            elementIndex={0}
                             data={categorySelectData}
-                            save="key"></SelectList>
-
+                            setFocused={setFocused}
+                            onChangeFunc={setCategory}
+                            value={category}
+                            placeholder={undefined}
+                        />
                         <Text className="text-lg mt-10">
                             {strings.CREATE_EXPENSE_NAME}
                         </Text>
@@ -227,24 +268,19 @@ export default function Create() {
                             value={expenseAmount}
                             placeholder={strings.CREATE_EXPENSE_AMOUNT}
                         />
-                        <Text className="text-lg mt-10">
+                        <Text className="text-lg mt-10 mb-3">
                             {strings.CREATE_EXPENSE_PAYER}
                         </Text>
-                        {
-                            // DROPDOWN as well
-                        }
-                        <TextInputFocus
+                        <MyDropdown
                             focused={focused}
                             elementIndex={3}
+                            data={memberData}
                             setFocused={setFocused}
                             onChangeFunc={setExpensePayerId}
                             value={expensePayerId}
                             placeholder={strings.CREATE_EXPENSE_PAYER}
                         />
-                        {
-                            // ===============
-                        }
-                        <Text className="text-lg mt-10">
+                        <Text className="text-lg mt-10 mb-3">
                             {strings.CREATE_EXPENSE_SPLIT}
                         </Text>
                         <View className="flex flex-row justify-between w-full">
