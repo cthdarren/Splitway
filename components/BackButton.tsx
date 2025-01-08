@@ -1,7 +1,7 @@
 import { TouchableOpacity } from "react-native";
 import { Ionicons} from "@expo/vector-icons/";
 import { router } from "expo-router";
-import styles from "@/styles/customStyles";
+import colors from "@/colors";
 
 function BackButton() {
     return (
@@ -12,7 +12,7 @@ function BackButton() {
             size={20}
             className="flex items-center"
             name="arrow-back"
-            color={styles.primary}
+            color={colors.primary}
           />
         </TouchableOpacity>
     );

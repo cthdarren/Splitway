@@ -3,8 +3,6 @@ import Checkbox from "react-native-check-box";
 import TextInputFocus from "@/components/TextInputFocus";
 import { Dropdown } from "react-native-element-dropdown";
 import strings from "@/i18n/en.json";
-import styles from "@/styles/customStyles";
-import { Entypo } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ReactElement, useState } from "react";
@@ -136,14 +134,18 @@ export default function Create() {
     // basically just the onChange, but i had to do some manipulationg because of how i'm
     // storing the data in state
     const editParticipantSplit = (id: number, newAmount: string) => {
+        const validChars = "0123456789.";
         const newParticipantList = [...participants];
         const participantIndex = participants.findIndex(
             (existingParticipant) => existingParticipant.id == id
         );
         if (participantIndex !== -1) {
-            newParticipantList[participantIndex].expenseAmount =
-                parseInt(newAmount) || null;
-            setParticipants(newParticipantList);
+            // check if every character in newAmount is part of validChars
+            if ([...newAmount].every((char) => validChars.includes(char)) === true) {
+                newParticipantList[participantIndex].expenseAmount =
+                    newAmount || null;
+                setParticipants(newParticipantList);
+            }
         }
     };
 
@@ -188,35 +190,57 @@ export default function Create() {
         const data: groupData = getGroupData(groupId);
 
         const validateFields = () => {
-            setErrors([])
-            const newErrors:MyErrors[] = []
-            if (category == null || categoryData.find(cat => (cat.id === parseInt(category))) === undefined){
-                newErrors.push({inputIndex: 0, error: "Invalid category!"})
+            setErrors([]);
+            const newErrors: MyErrors[] = [];
+            if (
+                category == null ||
+                categoryData.find((cat) => cat.id === parseInt(category)) ===
+                    undefined
+            ) {
+                newErrors.push({ inputIndex: 0, error: "Invalid category!" });
             }
             if (expenseName === "") {
-                newErrors.push({inputIndex: 1, error: "Invalid expense name!"})
-            } 
-            const tmpAmt = parseFloat(expenseAmount)
+                newErrors.push({
+                    inputIndex: 1,
+                    error: "Invalid expense name!"
+                });
+            }
+            const tmpAmt = parseFloat(expenseAmount);
             if (isNaN(tmpAmt) || tmpAmt <= 0 || expenseAmount == null) {
-                newErrors.push({inputIndex: 2, error: "Invalid expense amount!"})
-            } 
-            if (expensePayerId === null || data.members.find(member => member.id === parseInt(expensePayerId)) === undefined){
-                newErrors.push({inputIndex: 3, error: "Invalid payer!"})
+                newErrors.push({
+                    inputIndex: 2,
+                    error: "Invalid expense amount!"
+                });
+            }
+            if (
+                expensePayerId === null ||
+                data.members.find(
+                    (member) => member.id === parseInt(expensePayerId)
+                ) === undefined
+            ) {
+                newErrors.push({ inputIndex: 3, error: "Invalid payer!" });
             }
             // if there are no participants OR if it's an uneven split and one of the participants has an empty/non positive value
-            if (participants.length === 0 || splitType === 1 && participants.filter(part => part.expenseAmount == null || part.expenseAmount <= 0)){
-                newErrors.push({inputIndex: 4, error: "Invalid split!"})
+            if (
+                participants.length === 0 ||
+                (splitType === 1 &&
+                    participants.filter(
+                        (part) =>
+                            part.expenseAmount == null ||
+                            parseFloat(part.expenseAmount) <= 0
+                    ).length > 0)
+            ) {
+                newErrors.push({ inputIndex: 4, error: "Invalid split!" });
             }
-            setErrors(newErrors)
-            if (newErrors.length > 0)
-                return false
-            return true
+            setErrors(newErrors);
+            if (newErrors.length > 0) return false;
+            return true;
         };
 
         const submitExpenseData = () => {
             // TODO axios POST request to backend
-            if (!validateFields()){
-                return
+            if (!validateFields()) {
+                return;
             }
             if (category !== null && expensePayerId !== null) {
                 const data: createExpenseData = {
@@ -232,7 +256,6 @@ export default function Create() {
                 console.log(data);
             } else console.log("Fill in category and expense payer");
         };
-
 
         // format categoryData for dropdown
         const categorySelectData = categoryData.map((category) => ({
@@ -316,14 +339,14 @@ export default function Create() {
                             placeholder={strings.CREATE_EXPENSE_PAYER}
                         />
                         <ErrorField errors={errors} inputIndex={3} />
-                        <Text className="text-lg mt-10 mb-3">
+                        <Text className="text-lg mt-10">
                             {strings.CREATE_EXPENSE_SPLIT}
                         </Text>
 
                         <ErrorField errors={errors} inputIndex={4} />
-                        <View className="flex flex-row justify-between w-full">
+                        <View className="flex flex-row justify-between w-full mt-3">
                             <TouchableOpacity
-                                className={`border-[${splitType === 0 ? styles.primary : styles.inactive}] border rounded-md py-5 mr-10 flex-grow`}
+                                className={`${splitType === 0 ? "border-primary" : "border-inactive"} border rounded-md py-5 mr-10 flex-grow`}
                                 onPress={() => {
                                     changeSplitType(0);
                                 }}>
@@ -333,7 +356,7 @@ export default function Create() {
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                className={`border-[${splitType === 1 ? styles.primary : styles.inactive}] border rounded-md py-5 flex-grow`}
+                                className={`${splitType === 1 ? "border-primary" : "border-inactive"} border rounded-md py-5 flex-grow`}
                                 onPress={() => {
                                     changeSplitType(1);
                                 }}>
@@ -374,7 +397,7 @@ export default function Create() {
                                         {splitType === 1 ? (
                                             participantIsChecked(member) ? (
                                                 <TextInput
-                                                    keyboardType="numeric"
+                                                    keyboardType="decimal-pad"
                                                     value={getParticipantSplit(
                                                         member.id
                                                     )}

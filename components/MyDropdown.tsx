@@ -1,5 +1,5 @@
-import styles from "@/styles/customStyles";
 import { MyDropdownProps } from "@/types/componentproptypes";
+import colors from "@/colors";
 import { Dropdown } from "react-native-element-dropdown";
 
 function MyDropdown({
@@ -29,15 +29,16 @@ function MyDropdown({
                     paddingVertical: 16,
                     paddingHorizontal: 10
                 },
-                focused == 0
+                focused == elementIndex
                     ? {
-                          borderColor: `${styles.primary}`
+                        // Ignore the typescript error it still works
+                          borderColor: `${colors.primary}`
                       }
                     : {
-                          borderColor: `${styles.inactive}`
+                          borderColor: `${colors.inactive}`
                       }
             ]}
-            placeholderStyle={{color: `${styles.inactive}`}}
+            placeholderStyle={{color: `${colors.inactive}`}}
             onFocus={() => setFocused(elementIndex)}
             onBlur={() => setFocused(null)}
             placeholder={placeholder}

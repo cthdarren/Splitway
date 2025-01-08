@@ -1,3 +1,4 @@
+import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import { userModel } from "./models";
 
 export type groupData = {
@@ -14,7 +15,7 @@ export type returnData = {
 
 export type expenseParticipant = {
     id: number;
-    expenseAmount: number | null;
+    expenseAmount: string | null;
 }
 
 export type createExpenseData = {

@@ -1,4 +1,3 @@
-import styles from "@/styles/customStyles";
 import { TextInputFocusProps } from "@/types/componentproptypes";
 import { TextInput } from "react-native";
 
@@ -15,7 +14,7 @@ function TextInputFocus({
         <TextInput
             keyboardType={keyboardType ? keyboardType : undefined}
             className={
-                `${focused === elementIndex ? `border-[${styles.primary}]` : `border-[${styles.inactive}]`}` +
+                `${focused === elementIndex ? `border-primary` : `border-inactive`}` +
                 " border rounded-md px-3 py-5 mt-3"
             }
             onFocus={() => setFocused(elementIndex)}
