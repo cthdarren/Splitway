@@ -25,6 +25,7 @@ import MyDropdown from "@/components/MyDropdown";
 import { MyErrors } from "@/types/errors/myerrors";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
 import ErrorField from "@/components/ErrorField";
+import { parse } from "@babel/core";
 
 const getCategories = (): category[] => {
     // axios request to backend to return list of categories
@@ -100,6 +101,22 @@ export default function Create() {
     const [errors, setErrors] = useState<MyErrors[]>([]);
     const categoryData: category[] = getCategories();
 
+    const changeExpenseAmount = (newAmount: string) => {
+        console.log(newAmount)
+        const newAmountSplit = newAmount.split(".")
+        const beforeDec = newAmountSplit[0]
+        if (newAmountSplit.length > 1) {
+            const afterDec = newAmountSplit[1]
+            if (afterDec.length > 2) {
+                setExpenseAmount(beforeDec + "." + afterDec.slice(0, 2))
+            } else {
+                setExpenseAmount(newAmount)
+            }
+        } else {
+            setExpenseAmount(newAmount)
+        }
+    }
+
     //==================================================
     //  SPLIT RELATED FUNCTIONS
     //
@@ -141,7 +158,10 @@ export default function Create() {
         );
         if (participantIndex !== -1) {
             // check if every character in newAmount is part of validChars
-            if ([...newAmount].every((char) => validChars.includes(char)) === true) {
+            if (
+                [...newAmount].every((char) => validChars.includes(char)) ===
+                true
+            ) {
                 newParticipantList[participantIndex].expenseAmount =
                     newAmount || null;
                 setParticipants(newParticipantList);
@@ -180,6 +200,22 @@ export default function Create() {
         );
     };
 
+    const calculateRemainingAmount = ():number => {
+        // this complicated mess sums up all the expenses of each participant in the split
+        // and returns you the remaining amount
+        return parseFloat((parseFloat(expenseAmount) -
+            participants.reduce(
+                (
+                    partialSum: number,
+                    a: expenseParticipant
+                ) =>
+                    partialSum +
+                    parseFloat(a.expenseAmount || "0"),
+                0
+            )
+        ).toFixed(2))
+    }
+
     //==================================================
     // SPLIT RELATED FUCNTIONS END
     //==================================================
@@ -190,12 +226,13 @@ export default function Create() {
         const data: groupData = getGroupData(groupId);
 
         const validateFields = () => {
+            const validChars = "0123456789.";
             setErrors([]);
             const newErrors: MyErrors[] = [];
             if (
                 category == null ||
                 categoryData.find((cat) => cat.id === parseInt(category)) ===
-                    undefined
+                undefined
             ) {
                 newErrors.push({ inputIndex: 0, error: "Invalid category!" });
             }
@@ -221,16 +258,34 @@ export default function Create() {
                 newErrors.push({ inputIndex: 3, error: "Invalid payer!" });
             }
             // if there are no participants OR if it's an uneven split and one of the participants has an empty/non positive value
+            // OR expenseAmount contains invalid chars
             if (
                 participants.length === 0 ||
                 (splitType === 1 &&
                     participants.filter(
                         (part) =>
                             part.expenseAmount == null ||
-                            parseFloat(part.expenseAmount) <= 0
+                            parseFloat(part.expenseAmount) <= 0 ||
+                            [...part.expenseAmount].every((char) =>
+                                validChars.includes(char)
+                            ) === false
                     ).length > 0)
             ) {
                 newErrors.push({ inputIndex: 4, error: "Invalid split!" });
+            } else if (
+                // this typescript error won't reach because i check if it's null in the prev condition
+                // checks to see if the split amount matches the total expense amount
+                splitType === 1 &&
+                participants.reduce(
+                    (partialSum: number, a: expenseParticipant) =>
+                        partialSum + parseFloat(a.expenseAmount || '0'),
+                    0
+                ) !== parseFloat(expenseAmount)
+            ) {
+                newErrors.push({
+                    inputIndex: 4,
+                    error: "Total of split does not match total expense!"
+                });
             }
             setErrors(newErrors);
             if (newErrors.length > 0) return false;
@@ -244,6 +299,7 @@ export default function Create() {
             }
             if (category !== null && expensePayerId !== null) {
                 const data: createExpenseData = {
+                    groupId: groupId,
                     // parse back into int because of react dropdown wants keys in a string form
                     categoryId: parseInt(category),
                     expenseName: expenseName,
@@ -253,8 +309,9 @@ export default function Create() {
                     splitType: splitType === 1,
                     participants: participants
                 };
+                // SEND REQUEST
                 console.log(data);
-            } else console.log("Fill in category and expense payer");
+            }
         };
 
         // format categoryData for dropdown
@@ -321,7 +378,7 @@ export default function Create() {
                             focused={focused}
                             elementIndex={2}
                             setFocused={setFocused}
-                            onChangeFunc={setExpenseAmount}
+                            onChangeFunc={changeExpenseAmount}
                             value={expenseAmount}
                             placeholder={strings.CREATE_EXPENSE_AMOUNT}
                         />
@@ -365,8 +422,15 @@ export default function Create() {
                                 </Text>
                             </TouchableOpacity>
                         </View>
+                        <Text
+                            className={`${splitType === 1 ? "text-lg pt-3 text-right " : "hidden"} ${calculateRemainingAmount() < 0 ? ('text-danger') : ('')}`}>
 
-                        {data.members.map((member, index) => {
+                            {
+                                strings.CREATE_EXPENSE_SPLIT_UNEVEN_AMOUNT_LEFT + calculateRemainingAmount()
+                            }
+                        </Text>
+
+                        {data.members.map((member) => {
                             return (
                                 <View
                                     className="flex mt-2 flex-row items-center"

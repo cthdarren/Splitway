@@ -26,6 +26,7 @@
   "CREATE_EXPENSE_SPLIT": "Split",
   "CREATE_EXPENSE_SPLIT_UNEVEN": "Split unevenly",
   "CREATE_EXPENSE_SPLIT_UNEVEN_INDIV_AMOUNT": "Enter amount",
+  "CREATE_EXPENSE_SPLIT_UNEVEN_AMOUNT_LEFT": "Amount left to split: ",
   "CREATE_EXPENSE_SPLIT_EVEN": "Split evenly",
   "CREATE_EXPENSE_SELECT_PARTICIPANTS": "Select participants",
 }

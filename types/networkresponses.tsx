@@ -19,6 +19,7 @@ export type expenseParticipant = {
 }
 
 export type createExpenseData = {
+    groupId: number;
     categoryId: number;
     expenseName: string;
     totalAmount: number;
