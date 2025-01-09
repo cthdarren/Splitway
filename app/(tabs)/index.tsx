@@ -1,13 +1,13 @@
 import GroupCard from "@/components/GroupCard";
 import strings from "@/i18n/en.json";
 import { Text, View, ScrollView, TouchableHighlight } from "react-native";
-import { groupData, returnData } from "@/types/networkresponses";
+import { GroupData, returnData } from "@/types/networkresponses";
 import { Link } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import ScreenWrapper from "@/components/ScreenWrapper";
 
 function getGroupsData() {
-    const data: returnData = {
+    const data = {
         data: [
             {
                 id: 1,
@@ -34,7 +34,7 @@ function getGroupsData() {
 }
 
 export default function Index() {
-    const data: groupData[] = getGroupsData();
+    const data = getGroupsData();
 
     return (
         <ScreenWrapper>

@@ -18,7 +18,7 @@ import {
 import {
     createExpenseData,
     expenseParticipant,
-    groupData
+    GroupData
 } from "@/types/networkresponses";
 import { category, userModel } from "@/types/models";
 import MyDropdown from "@/components/MyDropdown";
@@ -48,7 +48,7 @@ const getCategories = (): category[] => {
         }
     ];
 };
-function getGroupData(id: number): groupData {
+function getGroupData(id: number): GroupData {
     // axios request to GET group data.
     // in groupId, out group data json
     if (id === 1) {
@@ -225,7 +225,7 @@ export default function Create() {
     const params = useLocalSearchParams();
     if (typeof params.id === "string") {
         const groupId: number = parseInt(params.id);
-        const data: groupData = getGroupData(groupId);
+        const data: GroupData = getGroupData(groupId);
 
         const validateFields = () => {
             const validChars = "0123456789.";
