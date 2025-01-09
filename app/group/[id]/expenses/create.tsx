@@ -16,8 +16,8 @@ import {
     Pressable
 } from "react-native";
 import {
-    createExpenseData,
-    expenseParticipant,
+    CreateExpenseData,
+    ExpenseParticipant,
     GroupData
 } from "@/types/networkresponses";
 import { category, userModel } from "@/types/models";
@@ -97,7 +97,7 @@ export default function Create() {
     const [expensePayerId, setExpensePayerId] = useState<string | null>(null);
     const [splitType, setSplitType] = useState(0);
     const [focused, setFocused] = useState<number | null>(null);
-    const [participants, setParticipants] = useState<expenseParticipant[]>([]);
+    const [participants, setParticipants] = useState<ExpenseParticipant[]>([]);
     const [errors, setErrors] = useState<MyErrors[]>([]);
     const categoryData: category[] = getCategories();
 
@@ -185,7 +185,7 @@ export default function Create() {
                 1
             );
         } else {
-            const newExpenseParticipant: expenseParticipant = {
+            const newExpenseParticipant: ExpenseParticipant = {
                 id: newParticipant.id,
                 expenseAmount: null
             };
@@ -210,7 +210,7 @@ export default function Create() {
 
         // sum up all the expenses for each participant
         const totalSum: number = participants.reduce(
-            (partialSum: number, a: expenseParticipant) =>
+            (partialSum: number, a: ExpenseParticipant) =>
                 partialSum + parseFloat(a.expenseAmount || "0"),
             0
         );
@@ -279,7 +279,7 @@ export default function Create() {
                 // checks to see if the split amount matches the total expense amount
                 splitType === 1 &&
                 participants.reduce(
-                    (partialSum: number, a: expenseParticipant) =>
+                    (partialSum: number, a: ExpenseParticipant) =>
                         partialSum + parseFloat(a.expenseAmount || "0"),
                     0
                 ) !== parseFloat(expenseAmount)
@@ -300,7 +300,7 @@ export default function Create() {
                 return;
             }
             if (category !== null && expensePayerId !== null) {
-                const data: createExpenseData = {
+                const data: CreateExpenseData = {
                     groupId: groupId,
                     // parse back into int because of react dropdown wants keys in a string form
                     categoryId: parseInt(category),
