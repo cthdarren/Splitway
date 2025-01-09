@@ -474,7 +474,7 @@ export default function Create() {
                                                     placeholder={
                                                         strings.CREATE_EXPENSE_SPLIT_UNEVEN_INDIV_AMOUNT
                                                     }
-                                                    className={`border-b rounded-lg px-3 color-black w-32`}
+                                                    className={`border-b px-3 color-black w-32 text-right`}
                                                 />
                                             ) : (
                                                 <React.Fragment></React.Fragment>
