@@ -102,20 +102,24 @@ export default function Create() {
     const categoryData: category[] = getCategories();
 
     const changeExpenseAmount = (newAmount: string) => {
-        console.log(newAmount)
-        const newAmountSplit = newAmount.split(".")
-        const beforeDec = newAmountSplit[0]
-        if (newAmountSplit.length > 1) {
-            const afterDec = newAmountSplit[1]
-            if (afterDec.length > 2) {
-                setExpenseAmount(beforeDec + "." + afterDec.slice(0, 2))
+        console.log(newAmount);
+        const validChars = "0123456789.";
+        const newAmountSplit = newAmount.split(".");
+        const beforeDec = newAmountSplit[0];
+
+        if ([...newAmount].every((char) => validChars.includes(char))) {
+            if (newAmountSplit.length > 1) {
+                const afterDec = newAmountSplit[1];
+                if (afterDec.length > 2) {
+                    setExpenseAmount(beforeDec + "." + afterDec.slice(0, 2));
+                } else {
+                    setExpenseAmount(newAmount);
+                }
             } else {
-                setExpenseAmount(newAmount)
+                setExpenseAmount(newAmount);
             }
-        } else {
-            setExpenseAmount(newAmount)
         }
-    }
+    };
 
     //==================================================
     //  SPLIT RELATED FUNCTIONS
@@ -200,21 +204,19 @@ export default function Create() {
         );
     };
 
-    const calculateRemainingAmount = ():number => {
+    const calculateRemainingAmount = (): number => {
         // this complicated mess sums up all the expenses of each participant in the split
         // and returns you the remaining amount
-        return parseFloat((parseFloat(expenseAmount) -
-            participants.reduce(
-                (
-                    partialSum: number,
-                    a: expenseParticipant
-                ) =>
-                    partialSum +
-                    parseFloat(a.expenseAmount || "0"),
-                0
-            )
-        ).toFixed(2))
-    }
+
+        // sum up all the expenses for each participant
+        const totalSum: number = participants.reduce(
+            (partialSum: number, a: expenseParticipant) =>
+                partialSum + parseFloat(a.expenseAmount || "0"),
+            0
+        );
+        const remainingSum: number = parseFloat(expenseAmount || '0') - totalSum;
+        return parseFloat(remainingSum.toFixed(2));
+    };
 
     //==================================================
     // SPLIT RELATED FUCNTIONS END
@@ -232,7 +234,7 @@ export default function Create() {
             if (
                 category == null ||
                 categoryData.find((cat) => cat.id === parseInt(category)) ===
-                undefined
+                    undefined
             ) {
                 newErrors.push({ inputIndex: 0, error: "Invalid category!" });
             }
@@ -278,7 +280,7 @@ export default function Create() {
                 splitType === 1 &&
                 participants.reduce(
                     (partialSum: number, a: expenseParticipant) =>
-                        partialSum + parseFloat(a.expenseAmount || '0'),
+                        partialSum + parseFloat(a.expenseAmount || "0"),
                     0
                 ) !== parseFloat(expenseAmount)
             ) {
@@ -423,11 +425,9 @@ export default function Create() {
                             </TouchableOpacity>
                         </View>
                         <Text
-                            className={`${splitType === 1 ? "text-lg pt-3 text-right " : "hidden"} ${calculateRemainingAmount() < 0 ? ('text-danger') : ('')}`}>
-
-                            {
-                                strings.CREATE_EXPENSE_SPLIT_UNEVEN_AMOUNT_LEFT + calculateRemainingAmount()
-                            }
+                            className={`${splitType === 1 ? "text-lg pt-3 text-right " : "hidden"} ${calculateRemainingAmount() < 0 ? "text-danger" : ""}`}>
+                            {strings.CREATE_EXPENSE_SPLIT_UNEVEN_AMOUNT_LEFT +
+                                calculateRemainingAmount()}
                         </Text>
 
                         {data.members.map((member) => {
