@@ -17,7 +17,7 @@ export type ExpenseData = {
     category: string;
     paidBy: string;
     splitType: boolean;
-    dateCreated: Date;
+    dateCreated: string;
     participants: {
         userId: number;
         splitAmount: number | null;

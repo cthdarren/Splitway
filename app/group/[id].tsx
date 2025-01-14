@@ -3,99 +3,57 @@ import ExpenseCard from "@/components/ExpenseCard";
 import { ExpenseData, GroupData } from "@/types/networkresponses";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-function getGroupData(id: number): GroupData {
-    if (id === 1) {
-        return {
-            id: id,
-            name: "Japan Trip",
-            currency: "JPY",
-            expenditure: 500,
-            members: [
-                {
-                    id: 1,
-                    name: "Darren"
-                },
-                {
-                    id: 2,
-                    name: "Jason"
-                },
-                { id: 3, name: "Pin Kang" }
-            ]
-        };
-    } else {
-        return {
-            id: id,
-            name: "Japan Trip but ID IS NOT 1",
-            currency: "JPY",
-            expenditure: 500,
-            members: [
-                {
-                    id: 1,
-                    name: "Darren"
-                },
-                {
-                    id: 2,
-                    name: "Jason"
-                },
-                { id: 3, name: "Pin Kang" }
-            ]
-        };
-    }
-}
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 
 const getExpenseData = (groupId: number): ExpenseData[] => {
-    return [
-        {
-            id: 1,
-            expenseAmount: 500,
-            expenseName: "7-11 Ramen",
-            groupId: groupId,
-            category: "Food",
-            paidBy: "Darren",
-            splitType: false,
-            dateCreated: new Date("2024-12-23"),
-            participants: [
-                { userId: 2, splitAmount: null },
-                { userId: 1, splitAmount: null }
-            ]
-        },
-        {
-            id: 1,
-            expenseAmount: 500,
-            expenseName: "Very very very very long expense nameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-            groupId: groupId,
-            category: "Food",
-            paidBy: "Darren",
-            splitType: false,
-            dateCreated: new Date("2024-11-24"),
-            participants: [
-                { userId: 2, splitAmount: null },
-                { userId: 1, splitAmount: null }
-            ]
-        },
-        {
-            id: 1,
-            expenseAmount: 500,
-            expenseName: "7-11 Ramen",
-            groupId: groupId,
-            category: "Food",
-            paidBy:"Darren",
-            splitType: false,
-            dateCreated: new Date("2024-10-24"),
-            participants: [
-                { userId: 2, splitAmount: null },
-                { userId: 1, splitAmount: null }
-            ]
-        }
-    ];
 };
 
 export default function Group() {
+    const [groupData, setGroupData] = useState<GroupData>();
+    const [expenseData, setExpenseData] = useState<ExpenseData[]>();
+    const [loading, setLoading] = useState<Boolean>();
+    const [groupId, setGroupId] = useState<number>();
+
     const params = useLocalSearchParams();
-    if (typeof params.id === "string") {
-        const groupId = parseInt(params.id);
-        const data = getGroupData(groupId);
-        const expenseData = getExpenseData(groupId);
+    useEffect(() => {
+        const fetchData = async () => {
+
+            if (typeof params.id === "string") {
+                const id = parseInt(params.id)
+                if (isNaN(id)) {
+                    console.error("Invalid group id")
+                    return;
+                }
+
+                setGroupId(id);
+                setLoading(true);
+
+                try {
+                    const [groupDataRes, expenseRes] = await Promise.all([
+                        axios.get("http://127.0.0.1:3000/groups/1"),
+                        axios.get("http://127.0.0.1:3000/expenses/1")
+                    ])
+
+                    setGroupData(groupDataRes.data)
+                    setExpenseData(expenseRes.data)
+                }
+                catch{
+                    console.error("Error fetching data")
+                    // TODO route to 404
+                } finally{
+                    setLoading(false)
+                }
+            }
+        }
+        fetchData();
+    }, []);
+    if (!loading) {
+        if (groupData === undefined || expenseData === undefined) {
+            // TODO 404
+            return;
+        }
         return (
             <View className="h-full">
                 <View className={`bg-secondary`}>
@@ -108,12 +66,12 @@ export default function Group() {
                 </View>
                 <View className={`bg-secondary`}>
                     <Text className="px-8 text-3xl font-bold pb-5">
-                        {data.name}
+                        {groupData.name}
                     </Text>
                     <Text className="px-8 my-5 text-xl">
                         Total Expenditure:{" "}
                         <Text className="text-xl font-bold">
-                            {data.expenditure + " " + data.currency}
+                            {groupData.expenditure + " " + groupData.currency}
                         </Text>
                     </Text>
                     <ScrollView
@@ -146,6 +104,6 @@ export default function Group() {
             </View>
         );
     } else {
-        // TODO route to 404 page
+        // TODO loading screen
     }
 }

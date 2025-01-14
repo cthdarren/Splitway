@@ -5,7 +5,7 @@ import { Entypo } from "@expo/vector-icons";
 function ExpenseCard({ expense }: { expense: ExpenseData }) {
     return (
         <View className="w-full pt-2 px-3 flex justify-between border-b border-inactive">
-            <Text className="text-sm pb-3">{expense.dateCreated.toDateString()}</Text>
+            <Text className="text-sm pb-3">{expense.dateCreated}</Text>
             <View className="flex pb-6 flex-row justify-between w-full items-center">
                 <Text numberOfLines={1} className="text-lg">
                     {expense.expenseName}
